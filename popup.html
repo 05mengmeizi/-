@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      width: 400px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+    }
+    .item {
+      margin: 8px 0;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item-label {
+      font-weight: bold;
+      color: #333;
+    }
+    .item-value {
+      color: #666;
+    }
+    .status {
+      font-weight: bold;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .success {
+      color: #4caf50;
+      background-color: #e8f5e9;
+    }
+    .warning {
+      color: #ff9800;
+      background-color: #fff3e0;
+    }
+    .error {
+      color: #f44336;
+      background-color: #ffebee;
+    }
+    #details {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      white-space: pre-line;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h2>博主数据分析</h2>
+  <div id="data-container">
+    <div class="item">
+      <span class="item-label">博主名称:</span>
+      <span class="item-value" id="blogger-name">-</span>
+    </div>
+    <div class="item">
+      <span class="item-label">账号标签:</span>
+      <span class="item-value" id="tags">-</span>
+    </div>
+    <div class="item">
+      <span class="item-label">笔记自然流量阅读量大于500条数:</span>
+      <span class="item-value" id="natural-reads">-</span>
+    </div>
+    <div class="item">
+      <span class="item-label">发现页阅读量比例:</span>
+      <span class="item-value" id="discovery-read-ratio">-</span>
+    </div>
+    <div class="item">
+      <span class="item-label">发现页曝光量比例:</span>
+      <span class="item-value" id="discovery-exposure-ratio">-</span>
+    </div>
+    <div class="item">
+      <span class="item-label">女粉比例:</span>
+      <span class="item-value" id="female-ratio">-</span>
+    </div>
+    <div class="item">
+      <span class="item-label">前五名兴趣标签:</span>
+      <span class="item-value" id="interests">-</span>
+    </div>
+    <div class="status" id="status">等待分析...</div>
+    <div id="details"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 
