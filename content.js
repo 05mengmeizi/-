@@ -177,44 +177,9 @@ async function analyzeData() {
     return result;
 }
 
-// 添加MutationObserver来处理动态加载的内容
-let observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-        if (mutation.addedNodes.length > 0) {
-            // 延迟执行以确保ECharts实例已经初始化
-            setTimeout(() => {
-                analyzeData().then(result => {
-                    chrome.runtime.sendMessage({
-                        action: 'dataAnalyzed',
-                        data: result
-                    });
-                });
-            }, 1000);
-        }
-    }
-});
-
-// 监听页面变化
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
-
-// 监听来自popup的消息
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'analyzeData') {
-        // 使用Promise处理异步操作
-        analyzeData().then(result => {
-            sendResponse(result);
-        });
-        // 返回true表示我们会异步发送响应
-        return true;
-    }
-});
-
-// 页面加载完成后自动分析
+// 页面加载完成后分析
 document.addEventListener('DOMContentLoaded', () => {
-    // 延迟执行以确保ECharts实例已经初始化
+    // 延迟执行以确保所有数据都已加载
     setTimeout(() => {
         analyzeData().then(result => {
             chrome.runtime.sendMessage({
@@ -223,6 +188,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }, 1000);
+});
+
+// 监听来自popup的消息
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'analyzeData') {
+        analyzeData().then(result => {
+            sendResponse(result);
+        });
+        return true;
+    }
 }); 
 
 
