@@ -5,7 +5,7 @@
   <style>
     body {
       width: 400px;
-      padding: 15px;
+      padding: 20px;
       font-family: Arial, sans-serif;
     }
     .item {
@@ -49,42 +49,111 @@
       white-space: pre-line;
       font-size: 12px;
     }
+    .status-item {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f5f5f5;
+    }
+    .status-item.valid {
+      background-color: #e8f5e9;
+    }
+    .status-item.invalid {
+      background-color: #ffebee;
+    }
+    .status-item.pending {
+      background-color: #fff3e0;
+    }
+    .status-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .status-value {
+      color: #666;
+    }
+    .blogger-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .overall-status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .overall-status.valid {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    .overall-status.invalid {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    .overall-status.pending {
+      background-color: #fff3e0;
+      color: #ef6c00;
+    }
+    .invalid-reason {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #ffebee;
+      border-radius: 5px;
+      color: #c62828;
+    }
+    .interest-tags {
+      margin-top: 10px;
+    }
+    .interest-tag {
+      display: inline-block;
+      margin: 2px;
+      padding: 2px 8px;
+      background-color: #e3f2fd;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #1976d2;
+    }
   </style>
 </head>
 <body>
-  <h2>博主数据分析</h2>
-  <div id="data-container">
-    <div class="item">
-      <span class="item-label">博主名称:</span>
-      <span class="item-value" id="blogger-name">-</span>
-    </div>
-    <div class="item">
-      <span class="item-label">账号标签:</span>
-      <span class="item-value" id="tags">-</span>
-    </div>
-    <div class="item">
-      <span class="item-label">笔记自然流量阅读量大于500条数:</span>
-      <span class="item-value" id="natural-reads">-</span>
-    </div>
-    <div class="item">
-      <span class="item-label">发现页阅读量比例:</span>
-      <span class="item-value" id="discovery-read-ratio">-</span>
-    </div>
-    <div class="item">
-      <span class="item-label">发现页曝光量比例:</span>
-      <span class="item-value" id="discovery-exposure-ratio">-</span>
-    </div>
-    <div class="item">
-      <span class="item-label">女粉比例:</span>
-      <span class="item-value" id="female-ratio">-</span>
-    </div>
-    <div class="item">
-      <span class="item-label">前五名兴趣标签:</span>
-      <span class="item-value" id="interests">-</span>
-    </div>
-    <div class="status" id="status">等待分析...</div>
-    <div id="details"></div>
+  <div class="blogger-name" id="bloggerName">正在获取博主信息...</div>
+  
+  <div class="status-item" id="naturalReadsStatus">
+    <div class="status-label">自然阅读量</div>
+    <div class="status-value">正在获取数据...</div>
   </div>
+
+  <div class="status-item" id="discoveryReadStatus">
+    <div class="status-label">发现页阅读量比例</div>
+    <div class="status-value">正在获取数据...</div>
+  </div>
+
+  <div class="status-item" id="discoveryExposureStatus">
+    <div class="status-label">发现页曝光量比例</div>
+    <div class="status-value">正在获取数据...</div>
+  </div>
+
+  <div class="status-item" id="femaleRatioStatus">
+    <div class="status-label">女粉比例</div>
+    <div class="status-value">正在获取数据...</div>
+  </div>
+
+  <div class="status-item" id="interestTagsStatus">
+    <div class="status-label">兴趣标签</div>
+    <div class="status-value">正在获取数据...</div>
+    <div class="interest-tags" id="interestTags"></div>
+  </div>
+
+  <div class="status-item" id="ageDistributionStatus">
+    <div class="status-label">年龄分布</div>
+    <div class="status-value">正在获取数据...</div>
+  </div>
+
+  <div class="overall-status" id="overallStatus">正在分析数据...</div>
+  <div id="invalidReason"></div>
+
   <script src="popup.js"></script>
 </body>
 </html> 

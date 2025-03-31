@@ -11,6 +11,7 @@ async function analyzeData() {
         hoverTags: [],
         topInterests: [],         // 添加前五名兴趣标签
         hasBeautyInterest: false, // 是否包含美妆兴趣
+        hasCorrectAgeDistribution: false, // 添加年龄分布判断字段
         isValid: false,
         invalidReason: ''
     };
@@ -86,6 +87,25 @@ async function analyzeData() {
                     console.log('获取到的兴趣标签:', result.topInterests);
                     console.log('是否包含美妆:', result.hasBeautyInterest);
                 }
+
+                // 获取用户年龄分布数据
+                const ageResponse = await fetch(`https://pgy.xiaohongshu.com/api/solar/kol/data/${userId}/fans_profile`);
+                const ageData = await ageResponse.json();
+                
+                if (ageData.success && ageData.data && ageData.data.ages) {
+                    // 找出占比最高的年龄段
+                    const maxAgeGroup = ageData.data.ages.reduce((max, current) => 
+                        current.percent > max.percent ? current : max
+                    );
+                    
+                    // 判断18-24岁是否是占比最高的年龄段
+                    result.hasCorrectAgeDistribution = maxAgeGroup.group === '18-24';
+                    console.log('年龄分布判断结果:', {
+                        maxAgeGroup: maxAgeGroup.group,
+                        maxPercent: maxAgeGroup.percent,
+                        isCorrect: result.hasCorrectAgeDistribution
+                    });
+                }
             } catch (error) {
                 console.error('API数据获取失败:', error);
             }
@@ -156,6 +176,10 @@ async function analyzeData() {
             if (!result.hasBeautyInterest) {
                 invalidCount++;
                 invalidItem = '前五名兴趣标签中不包含美妆相关';
+            }
+            if (!result.hasCorrectAgeDistribution) {
+                invalidCount++;
+                invalidItem = '18-24岁年龄段占比不是最高';
             }
 
             if (invalidCount === 0) {
