@@ -55,11 +55,7 @@ async function analyzeData() {
 
                     // 检查是否包含美妆相关标签
                     result.hasBeautyTag = result.tags.some(tag => 
-                        tag.includes('美妆') || 
-                        tag.includes('护肤') || 
-                        tag.includes('彩妆') || 
-                        tag.includes('化妆品') || 
-                        tag.includes('美妆个护')
+                        tag.includes('美妆')
                     );
                     console.log('账号标签中是否包含美妆:', result.hasBeautyTag);
                 }
@@ -119,7 +115,7 @@ async function analyzeData() {
                     
                     console.log('获取到的兴趣标签:', result.topInterests);
                     console.log('是否包含美妆:', result.hasBeautyInterest);
-                }
+                } 
 
                 // 获取用户年龄分布数据
                 const ageResponse = await fetch(`https://pgy.xiaohongshu.com/api/solar/kol/data/${userId}/fans_profile`);
@@ -190,6 +186,9 @@ async function analyzeData() {
         } else if (result.discoveryReadRatio < 60) {
             result.isValid = false;
             result.invalidReason = '不符合要求';
+        } else if (!result.hasBeautyInterest) {
+            result.isValid = false;
+            result.invalidReason = '前五名兴趣标签中不包含美妆相关';
         } else {
             // 检查其他条件
             let invalidCount = 0;
@@ -202,10 +201,6 @@ async function analyzeData() {
             if (result.femaleRatio < 85) {
                 invalidCount++;
                 invalidItem = '女粉比例小于85%';
-            }
-            if (!result.hasBeautyInterest) {
-                invalidCount++;
-                invalidItem = '前五名兴趣标签中不包含美妆相关';
             }
             if (!result.hasCorrectAgeDistribution) {
                 invalidCount++;
