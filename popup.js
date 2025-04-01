@@ -6,6 +6,22 @@ function updateUI(data) {
         bloggerNameElement.textContent = data.bloggerName || '未知博主';
     }
 
+    // 更新账号标签
+    const accountTagsElement = document.getElementById('accountTagsStatus');
+    if (accountTagsElement) {
+        accountTagsElement.className = `status-item ${data.hasBeautyTag ? 'valid' : 'invalid'}`;
+        const tagsContainer = document.getElementById('accountTags');
+        if (tagsContainer && data.tags && data.tags.length > 0) {
+            tagsContainer.innerHTML = data.tags
+                .map(tag => `<span class="account-tag">${tag}</span>`)
+                .join('');
+            accountTagsElement.querySelector('.status-value').textContent = 
+                data.hasBeautyTag ? '包含美妆相关标签' : '不包含美妆相关标签';
+        } else {
+            accountTagsElement.querySelector('.status-value').textContent = '暂无标签';
+        }
+    }
+
     // 更新自然阅读量状态
     const naturalReadsElement = document.getElementById('naturalReadsStatus');
     if (naturalReadsElement) {

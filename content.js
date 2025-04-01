@@ -12,25 +12,58 @@ async function analyzeData() {
         topInterests: [],         // 添加前五名兴趣标签
         hasBeautyInterest: false, // 是否包含美妆兴趣
         hasCorrectAgeDistribution: false, // 添加年龄分布判断字段
+        hasBeautyTag: false, // 添加美妆标签判断字段
         isValid: false,
         invalidReason: ''
     };
 
     // 获取页面数据
     try {
-        // 获取博主姓名
-        const nameElement = document.querySelector('.blogger-name');
-        if (nameElement) {
-            result.bloggerName = nameElement.textContent.trim();
-            console.log('获取到博主姓名:', result.bloggerName);
-        }
-
         // 从URL中获取userId
         const urlMatch = window.location.href.match(/blogger-detail\/([^?]+)/);
         if (urlMatch) {
             const userId = urlMatch[1];
             console.log('从URL获取到userId:', userId);
             try {
+                // 获取博主基本信息
+                const bloggerResponse = await fetch(`https://pgy.xiaohongshu.com/api/solar/cooperator/user/blogger/${userId}`);
+                const bloggerData = await bloggerResponse.json();
+                
+                if (bloggerData.success && bloggerData.data) {
+                    // 获取博主姓名
+                    result.bloggerName = bloggerData.data.name;
+                    console.log('获取到博主姓名:', result.bloggerName);
+
+                    // 获取标签
+                    result.tags = [];
+                    
+                    // 添加内容标签中的taxonomy1Tag
+                    if (bloggerData.data.contentTags && bloggerData.data.contentTags.length > 0) {
+                        bloggerData.data.contentTags.forEach(contentTag => {
+                            if (contentTag.taxonomy1Tag) {
+                                result.tags.push(contentTag.taxonomy1Tag);
+                            }
+                        });
+                    }
+                    
+                    // 添加特征标签
+                    if (bloggerData.data.featureTags) {
+                        result.tags.push(...bloggerData.data.featureTags);
+                    }
+
+                    console.log('获取到的标签:', result.tags);
+
+                    // 检查是否包含美妆相关标签
+                    result.hasBeautyTag = result.tags.some(tag => 
+                        tag.includes('美妆') || 
+                        tag.includes('护肤') || 
+                        tag.includes('彩妆') || 
+                        tag.includes('化妆品') || 
+                        tag.includes('美妆个护')
+                    );
+                    console.log('账号标签中是否包含美妆:', result.hasBeautyTag);
+                }
+
                 // 获取笔记自然阅读量数据
                 const notesResponse = await fetch(`https://pgy.xiaohongshu.com/api/solar/kol/data_v2/notes_detail?advertiseSwitch=0&orderType=1&pageNumber=1&pageSize=8&userId=${userId}&noteType=4&withComponent=false`);
                 const notesData = await notesResponse.json();
@@ -111,12 +144,6 @@ async function analyzeData() {
             }
         }
 
-        // 其他DOM数据获取保持不变...
-        const tagElements = document.querySelectorAll('.blogger-tag-list .d-tag-content');
-        result.tags = Array.from(tagElements)
-            .map(el => el.textContent.trim())
-            .filter(text => text.length > 0);
-
         // 更新女粉比例获取逻辑
         const genderElements = document.querySelectorAll('.age-chart--content--desc');
         for (const el of genderElements) {
@@ -154,7 +181,10 @@ async function analyzeData() {
         });
 
         // 判断是否符合要求
-        if (result.naturalReads < 5) {
+        if (!result.hasBeautyTag) {
+            result.isValid = false;
+            result.invalidReason = '账号标签中不包含美妆相关';
+        } else if (result.naturalReads < 5) {
             result.isValid = false;
             result.invalidReason = '不符合要求';
         } else if (result.discoveryReadRatio < 60) {
